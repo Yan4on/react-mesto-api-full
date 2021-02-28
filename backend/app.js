@@ -21,7 +21,7 @@ app.use(cors());
 
 const allowedCors = [
   'localhost:3000',
-  'localhost:3001',
+  'localhost:3002',
   'https://yan4on.students.nomoredomains.icu/',
   'http://yan4on.students.nomoredomains.icu/',
   'https://api.yan4on.students.nomoredomains.icu/',
