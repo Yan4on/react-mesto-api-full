@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
 
-const { PORT = 3000 } = process.env;
+const server = require('http').createServer();
+
+const port = process.env.PORT || 3000;
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -21,7 +23,7 @@ app.use(cors());
 
 const allowedCors = [
   'localhost:3000',
-  'localhost:3002',
+  'localhost:3001',
   'https://yan4on.students.nomoredomains.icu/',
   'http://yan4on.students.nomoredomains.icu/',
   'https://api.yan4on.students.nomoredomains.icu/',
@@ -63,8 +65,4 @@ app.use('/', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
-  // eslint-disable-next-line no-console
-  console.log(`App listening on port ${PORT}`);
-});
+server.listen(port, () => console.log(`Listening on ${port}`));
