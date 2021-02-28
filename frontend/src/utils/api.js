@@ -106,9 +106,6 @@ setErrorServer(err) {
 
 
 export const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-17",
-  headers: {
-    authorization: "691998da-b477-4262-8750-23151b55d1d5",
-    "Content-Type": "application/json",
-  },
+  baseUrl: "http://api.yan4on.students.nomoredomains.icu/",
+  headers: `Bearer ${localStorage.getItem('token')}`
 });
