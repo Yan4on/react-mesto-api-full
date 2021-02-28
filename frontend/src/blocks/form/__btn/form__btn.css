@@ -1,0 +1,16 @@
+.form__btn {
+    width: 358px;
+    height: 50px;
+    margin-top: 216px;
+    font-size: 18px;
+    line-height: 1.2;
+    border-radius: 2px;
+    border: none;
+    transition: opacity 0.4s;
+}
+
+.form__btn:hover {
+    opacity: 0.85;
+    transition: opacity 0.4s;
+    cursor: pointer;
+}

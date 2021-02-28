@@ -1,0 +1,5 @@
+.form__add-img {
+    display: flex;
+    flex-direction: column;
+    padding-top: 5%;
+}

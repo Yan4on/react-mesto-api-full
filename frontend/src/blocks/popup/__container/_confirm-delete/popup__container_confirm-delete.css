@@ -1,0 +1,5 @@
+.popup__container_confirm-delete {
+    display: flex;
+    min-height: 181px;
+    flex-direction: column;
+}

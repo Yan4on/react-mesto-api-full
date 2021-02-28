@@ -1,0 +1,6 @@
+.popup__message {
+    margin: auto;
+    text-align: center;
+    max-width: 358px;
+    color: rgb(38, 60, 100);
+}

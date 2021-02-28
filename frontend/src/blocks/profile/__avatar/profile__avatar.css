@@ -1,0 +1,41 @@
+.profile__avatar {
+    position: relative;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    border: 0;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .profile__avatar::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: #000;
+    opacity: 0;
+    cursor: pointer;
+    background: url(/src/images/edit_buton.svg) center center no-repeat;
+    background-size: 30%;
+  }
+  
+    /* Оверлей при наведении*/
+  .profile__avatar:hover::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: #000;
+    opacity: 0.8;
+    transition: opacity 0.7s ease 0.1s;
+  }

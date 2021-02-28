@@ -1,0 +1,15 @@
+.grid-card__like {
+    background-image: url("../../../images/like.svg");
+    background-color: transparent;
+    width: 21px;
+    height: 19px;
+    margin-right: 19px;
+    border: none;
+    outline: none;
+}
+
+.grid-card__like:hover {
+    opacity: .6;
+    transition: opacity 0.2s linear;
+    cursor: pointer;
+}

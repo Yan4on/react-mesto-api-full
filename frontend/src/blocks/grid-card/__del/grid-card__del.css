@@ -1,0 +1,19 @@
+.grid-card__del {
+    position: absolute;
+    top: 7%;
+    right: 0%;
+    background-image: url(../../../images/grid-card__del.svg);
+    background-color: transparent;
+    width: 18px;
+    height: 19px;
+    margin-right: 19px;
+    border: none;
+    outline: none;
+    display: none;
+}
+
+.grid-card__del:hover {
+    opacity: .6;
+    transition: opacity 0.2s linear;
+    cursor: pointer;
+}

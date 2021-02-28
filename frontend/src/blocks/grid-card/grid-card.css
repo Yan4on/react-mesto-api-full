@@ -1,0 +1,11 @@
+.grid-card {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    max-width: 282px;
+    max-height: 361px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}

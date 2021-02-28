@@ -1,0 +1,19 @@
+.popup__container-add-img {
+    width: 430px;
+    min-height: 330px;
+    padding: 34px 36px 55px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: #fff;
+    margin-top: 25px;
+    position: relative;   
+}
+
+
+ @media screen and (max-width: 768px) {  
+.popup__container-add-img {
+    margin-left: 23px;
+    margin-right: 23px;
+    padding: 24px 20px 35px;
+    }
+} 

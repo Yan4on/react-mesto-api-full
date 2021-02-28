@@ -1,0 +1,20 @@
+.profile__interst {
+    max-width: 360px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 1;
+    margin: 16px 0 0;
+}
+
+
+@media screen and (max-width: 767px) {
+.profile__interst {
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    margin: 0 0 16% ;
+    }
+}

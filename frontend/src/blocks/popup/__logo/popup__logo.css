@@ -1,0 +1,10 @@
+.popup__logo {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: 36px auto 32px auto;
+    background-image: url('../../../images/ok.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}

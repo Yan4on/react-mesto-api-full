@@ -1,0 +1,9 @@
+.profile__form {
+    margin: 0 0 0 30px;
+}
+
+@media screen and (max-width: 767px) { 
+.profile__form {
+    margin: 0;
+    }
+} 

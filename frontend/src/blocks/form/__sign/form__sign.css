@@ -1,0 +1,6 @@
+.form__sign {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 0 0;
+}
