@@ -8,15 +8,18 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Это поле обязательное для заполнения'],
     minlength: [2, 'Длина имени от 2 до 30 символов'],
     maxlength: [30, 'Длина имени от 2 до 30 символов'],
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     required: [true, 'Это поле обязательное для заполнения'],
     minlength: [2, 'Допустимая длина от 2 до 30 символов'],
     maxlength: [30, 'Допустимая длина от 2 до 30 символов'],
+    default: 'Исследователь океана',
   },
   avatar: {
     type: String,
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (link) => validator.isURL(link),
       message: (props) => `${props.value} некорректный адрес!`,

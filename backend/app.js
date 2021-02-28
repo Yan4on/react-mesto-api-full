@@ -4,9 +4,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
 
-const server = require('http').createServer();
-
-const port = process.env.PORT || 3000;
+const { PORT = 3002 } = process.env;
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -65,4 +63,8 @@ app.use('/', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-server.listen(port, () => console.log(`Listening on ${port}`));
+app.listen(PORT, () => {
+  // Если всё работает, консоль покажет, какой порт приложение слушает
+  // eslint-disable-next-line no-console
+  console.log(`App listening on port ${PORT}`);
+});
