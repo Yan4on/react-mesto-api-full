@@ -3,7 +3,7 @@
   
 Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
 
-http://yan4on.students.nomoredomains.icu/ - Фронтенд
-http://api.yan4on.students.nomoredomains.icu/ - Бэкенд
+https://yan4on.students.nomoredomains.icu/ - Фронтенд
+https://api.yan4on.students.nomoredomains.icu/ - Бэкенд
 
 ip адрес сервера: 178.154.250.247
