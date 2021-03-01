@@ -106,6 +106,6 @@ setErrorServer(err) {
 
 
 export const api = new Api({
-  baseUrl: "http://api.yan4on.students.nomoredomains.icu/",
+  baseUrl: "https://api.yan4on.students.nomoredomains.icu/",
   headers: `Bearer ${localStorage.getItem('token')}`
 });
