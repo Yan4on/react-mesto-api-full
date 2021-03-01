@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
 
-const { PORT = 3002 } = process.env;
+const { PORT = 3000 } = process.env;
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
