@@ -7,6 +7,7 @@ const { isCelebrate } = require('celebrate');
 const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
