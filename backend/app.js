@@ -25,6 +25,7 @@ const limiter = rateLimit({
 });
 
 const allowedCors = [
+  'http://127.0.0.1:3001',
   'localhost:3000',
   'http://yan4on.students.nomoredomains.icu',
   'http://www.yan4on.students.nomoredomains.icu',
@@ -36,15 +37,36 @@ app.use(cors());
 app.use((req, res, next) => {
   const { origin } = req.headers; // Записываем в переменную origin соответствующий заголовок
 
-  if (allowedCors.includes(origin)) {
+  // eslint-disable-next-line eqeqeq
+  if (req.method == 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+  } else if (allowedCors.includes(origin)) {
     // Проверяем, что значение origin есть среди разрешённых доменов
+    res.send().status(202);
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    res.header('Access-Control-Allow-Credentials', true);
   }
 
   next();
 });
+
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'access-control-allow-origin, Authorization',
+//   );
+
+//   if (req.method === 'OPTIONS') {
+//     res.status(200).send();
+//   } else {
+//     next();
+//   }
+// });
 
 app.use(helmet());
 app.use(limiter);

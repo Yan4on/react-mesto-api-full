@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://api.yan4on.students.nomoredomains.icu';
-// export const BASE_URL = 'http://localhost:3005';
+// export const BASE_URL = 'https://api.yan4on.students.nomoredomains.icu';
+export const BASE_URL = 'http://localhost:3000';
 
 export const register = (email, password) => {
     return fetch(`${BASE_URL}/signup`, {
@@ -8,7 +8,7 @@ export const register = (email, password) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        // credentials: 'include',
     })
         .then(res => {
             if (res.ok) { return res.json(); }
@@ -22,7 +22,7 @@ export const authorize = (email, password) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        // credentials: 'include',
     })
         .then(res => {
             if (res.ok) {
@@ -38,7 +38,7 @@ export const getContent = () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
+        // credentials: 'include',
     })
         .then(res => {
             if (res.ok) { return res.json(); }
@@ -52,7 +52,7 @@ export const logout = () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
+        // credentials: 'include',
     })
         .then(res => {
             if (res.ok) { return res.json(); }

@@ -104,10 +104,10 @@ class Api {
 }
 
 export const api = new Api({
-//   baseUrl: 'http://localhost:3005',
-  baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
+  baseUrl: 'http://localhost:3000',
+//   baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
   headers: {
       'Content-Type': 'application/json',
   },
-  credentials: 'include'
+//   credentials: 'include'
 });
