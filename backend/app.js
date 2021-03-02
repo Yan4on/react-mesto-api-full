@@ -2,9 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-// const rateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 const { isCelebrate } = require('celebrate');
-// const cors = require('cors');
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 const bodyParser = require('body-parser');
@@ -18,36 +18,36 @@ const { createUserValidation, loginValidation } = require('./validation/userVali
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-//   message: 'Количество запросов привысило допустимое значение, пожалуйста попробуйте позже',
-// });
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Количество запросов привысило допустимое значение, пожалуйста попробуйте позже',
+});
 
-// const allowedCors = [
-//   'localhost:3000',
-//   'http://yan4on.students.nomoredomains.icu',
-//   'http://www.yan4on.students.nomoredomains.icu',
-//   'https://yan4on.students.nomoredomains.icu',
-//   'https://www.yan4on.students.nomoredomains.icu',
-// ];
+const allowedCors = [
+  'localhost:3000',
+  'http://yan4on.students.nomoredomains.icu',
+  'http://www.yan4on.students.nomoredomains.icu',
+  'https://yan4on.students.nomoredomains.icu',
+  'https://www.yan4on.students.nomoredomains.icu',
+];
 
-// app.use(cors());
-// app.use((req, res, next) => {
-//   const { origin } = req.headers; // Записываем в переменную origin соответствующий заголовок
+app.use(cors());
+app.use((req, res, next) => {
+  const { origin } = req.headers; // Записываем в переменную origin соответствующий заголовок
 
-//   if (allowedCors.includes(origin)) {
-//     // Проверяем, что значение origin есть среди разрешённых доменов
-//     res.header('Access-Control-Allow-Origin', origin);
-//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-//   }
+  if (allowedCors.includes(origin)) {
+    // Проверяем, что значение origin есть среди разрешённых доменов
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  }
 
-//   next();
-// });
+  next();
+});
 
 app.use(helmet());
-// app.use(limiter);
+app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
