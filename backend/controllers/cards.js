@@ -7,7 +7,7 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       if (!cards.length) {
-        throw new NotFoundError('Карточки в базе данных отсутствуют');
+        res.send({ data: [] });
       }
       res.send({ data: cards });
     })

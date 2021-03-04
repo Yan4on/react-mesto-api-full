@@ -24,7 +24,7 @@ const Login = memo(({ authLogin, inputPass  }) => {
         }
 
         authLogin(email, password)
-            .then(() => {
+            .then((res) => {
                 setEmail('');
                 setPassword('');
             });

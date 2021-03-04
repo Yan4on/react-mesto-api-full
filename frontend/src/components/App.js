@@ -41,6 +41,11 @@ function App() {
     status: ''
   });
 
+  useEffect(() => {
+    tokenCheck();
+  }, []);
+
+
   const [cards, setCards] = React.useState([]);
 
   // Используем хук для получения информации о юзере и карточки
@@ -52,10 +57,11 @@ function App() {
       ])
         .then((data) => {
           const [userData, cardsData] = data;
+          
           setCurrentUser(userData); //меняем состояния 
           setCards(cardsData);
         })
-        .catch((err) => { api.setErrorServer(err); })
+        .catch((err) => { console.log("оштбка err") })
     }
   }, [loggedIn]);
 
@@ -161,60 +167,60 @@ function App() {
     setUserEmail(email);
   }
 
-//   function tokenCheck() {
-//     const jwt = localStorage.getItem('jwt');
-//   if (jwt) {
-//   auth.getContent(jwt)
-//   .then((res) => {
-//   if (res) {
-//   setLoggedIn(true);
-//   setUserEmail(res.data.email);
-//   history.push('/');
-//      }
-//    });
-//   }
-//  }
+  //   function tokenCheck() {
+  //     const jwt = localStorage.getItem('token');
+  //   if (jwt) {
+  //   auth.getTa(jwt)
+  //   .then((res) => {
+  //   if (res) {
+  //   setLoggedIn(true);
+  //   setUserEmail(res.data.email);
+  //   history.push('/');
+  //      }
+  //    });
+  //   }
+  //  }
 
- function tokenCheck () {
-  const jwt = localStorage.getItem('token');
-  if (jwt) {
-    auth.getToken(jwt)
-    .then((res)=> {
-      setUserEmail(res.data.email)
-      setLoggedIn(true)
-    })
-    .catch(err => console.error(err));//выведем ошибку;
-  }
-}
-
- function handleAuthRegister(email, password) {
- auth.register(email, password)
-     .then((res) => {
-         if (res.status === 201) {
-             onInfoTooltip('Вы успешно зарегистрировались!', 'ok')
-             history.push('/sign-in');
-             changeCurrUrl('/sign-in');
-             return;
-         }
-         onInfoTooltip('Что-то пошло не так! Попробуйте ещё раз.', 'error')
-         return res;
-     })
-     .catch((err) => {
-         onInfoTooltip('Что-то пошло не так! Попробуйте ещё раз.', 'error');
-         console.log(err)
-     });
+  function tokenCheck() {
+    const jwt = localStorage.getItem('token');
+    if (jwt) {
+      auth.getToken(jwt)
+        .then((res) => {
+          setUserEmail(res.data.email)
+          setLoggedIn(true)
+        })
+        .catch(err => console.error(err));//выведем ошибку;
     }
+  }
 
- function handleAuthLogin(email, password) {
-  return auth.authorize(email, password)
-    .then((data) => {
-      if (data) {
-        handleLogin(email);
-        history.push('/');
-      }
-    })
-    .catch(err => console.log(err));
-}
+  function handleAuthRegister(email, password) {
+    auth.register(email, password)
+      .then((res) => {
+        if (res.status === 201) {
+          onInfoTooltip('Вы успешно зарегистрировались!', 'ok')
+          history.push('/sign-in');
+          changeCurrUrl('/sign-in');
+          return;
+        }
+        onInfoTooltip('Что-то пошло не так! Попробуйте ещё раз.', 'error')
+        return res;
+      })
+      .catch((err) => {
+        onInfoTooltip('Что-то пошло не так! Попробуйте ещё раз.', 'error');
+        console.log(err)
+      });
+  }
+
+  function handleAuthLogin(email, password) {
+    return auth.authorize(email, password)
+      .then((data) => {
+        if (data) {
+          handleLogin(email);
+          history.push('/');
+        }
+      })
+      .catch(err => console.log(err));
+  }
 
   function signOut() {
     localStorage.removeItem('jwt');
@@ -230,10 +236,6 @@ function App() {
     setCurrURL(location.pathname);
   }, [location.pathname, currURL]);
 
-  useEffect(() => {
-    tokenCheck();
-  }, [tokenCheck]);
-
   // Объект с состояниями попапов
   const popupStateContext = {
     isEditProfilePopupOpen,
@@ -245,7 +247,7 @@ function App() {
     <StatePopup.Provider value={popupStateContext}>
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-        <Header
+          <Header
             email={userEmail}
             signOut={signOut}
             loggedIn={loggedIn}
@@ -263,23 +265,24 @@ function App() {
             />
             } />
             <Route path="/sign-up">
-              <Register 
-              changeCurrUrl={changeCurrUrl}
-              authRegister={handleAuthRegister}
-               />
+              <Register
+                changeCurrUrl={changeCurrUrl}
+                authRegister={handleAuthRegister}
+              />
             </Route>
             <Route path="/sign-in">
-              <Login 
-              handleLogin={handleLogin} 
-              authLogin={handleAuthLogin}
+              <Login
+                handleLogin={handleLogin}
+                authLogin={handleAuthLogin}
+                tokenCheck = {tokenCheck}
               />
             </Route>
             <Route>
-              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in"  />}
+              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
             </Route>
           </Switch>
 
-          
+
 
           {/*Создаем попап для аватара и передаем пропсы и обработчики*/}
           <EditAvatarPopup
@@ -324,7 +327,7 @@ function App() {
             onClose={closeAllPopups}
           />}
 
-          { loggedIn && <Footer/>}
+          {loggedIn && <Footer />}
 
         </div>
       </CurrentUserContext.Provider>

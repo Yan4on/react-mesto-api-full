@@ -6,7 +6,7 @@ const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
 // const AuthError = require('../errors/auth-err');
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = 'secret' } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -17,7 +17,20 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      console.log('currentUser from controllers/users.js', user);
+      if (user) {
+        return res.send({ data: user });
+      }
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .catch(next);
+};
+
 module.exports.getUserId = (req, res, next) => {
+  /* декодировать jwt, взять id, найти по id пользователя, отдать */
   User.findById(req.params.id)
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
@@ -30,23 +43,28 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  console.log(`${email} ${password}`);
   User.findOne({ email })
     .then((user) => {
+      console.log(user);
       if (user) {
         throw new ConflictError('Email уже используется');
       }
       return bcrypt.hash(password, 10);
     })
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }))
+    .then((hash) => {
+      console.log('hash =', hash);
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      });
+    })
     .then(() => res.send({
       name, about, avatar, email,
-    })) // {name, about, avatar, email}
+    }))
     .catch(next);
 };
 
