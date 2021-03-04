@@ -1,8 +1,8 @@
 class Api {
-  constructor({ baseUrl, headers, credentials }) {
+  constructor({ baseUrl, headers }) {
       this._baseUrl = baseUrl;
       this._headers = headers;
-      this._credentials = credentials;
+    //   this._credentials = credentials;
       this._errorServer = document.querySelector(".error-server");
   }
 
@@ -15,8 +15,10 @@ class Api {
   // Получение с сервера начальных карточек 
   getInitialCards() {
       return fetch(`${this._baseUrl}/cards`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          authorization:  this.headers
+        }
+        //   credentials: this._credentials,
       })
           .then(res => { return this._getResponseData(res); })
   }
@@ -24,8 +26,11 @@ class Api {
   // Сохранение на сервере карточки
   saveCardToServer({ name, link }) {
       return fetch(`${this._baseUrl}/cards`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          authorization: this.headers,
+          'Content-Type': 'application/json'
+        },
+        //   credentials: this._credentials,
           method: 'POST',
           body: JSON.stringify({
               name: name,
@@ -38,8 +43,10 @@ class Api {
   // Удаление на сервере карточки
   deleteCardToServer(card) {
       return fetch(`${this._baseUrl}/cards/${card._id}`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          authorization: this.headers,
+        },
+        //   credentials: this._credentials,
           method: 'DELETE'
       })
   }
@@ -50,7 +57,7 @@ class Api {
 
       return fetch(`${this._baseUrl}/cards/${card._id}/likes`, {
           headers: this._headers,
-          credentials: this._credentials,
+        //   credentials: this._credentials,
           method: action
       })
           .then((res) => { return this._getResponseData(res); })
@@ -59,8 +66,11 @@ class Api {
   // Сохранение на сервере Аватара 
   saveAvatarToServer({ link }) {
       return fetch(`${this._baseUrl}/users/me/avatar`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: this.headers,
+        },
+        //   credentials: this._credentials,
           method: 'PATCH',
           body: JSON.stringify({
               avatar: link
@@ -72,8 +82,10 @@ class Api {
   // Получение с сервера информация о пользователе 
   getUserInfoFromServer() {
       return fetch(`${this._baseUrl}/users/me`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          authorization: this.headers
+        }
+        //   credentials: this._credentials,
       })
           .then(res => { return this._getResponseData(res); })
   }
@@ -81,8 +93,11 @@ class Api {
   // Сохранение на сервере информация о пользователе 
   saveUserInfoToServer({ name, about }) {
       return fetch(`${this._baseUrl}/users/me`, {
-          headers: this._headers,
-          credentials: this._credentials,
+        headers: {
+          authorization:  this.headers,
+          'Content-Type': 'application/json'
+        },
+        //   credentials: this._credentials,
           method: 'PATCH',
           body: JSON.stringify({
               name: name,
@@ -104,10 +119,8 @@ class Api {
 }
 
 export const api = new Api({
-//   baseUrl: 'http://localhost:3000',
-  baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
-  headers: {
-      'Content-Type': 'application/json',
-  }
+  baseUrl: 'http://localhost:3000',
+  // headers: `Bearer ${localStorage.getItem('token')}`
+//   baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
 //   credentials: 'include'
 });

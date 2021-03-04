@@ -161,20 +161,31 @@ function App() {
     setUserEmail(email);
   }
 
-  function tokenCheck() {
-    const jwt = localStorage.getItem('jwt');
+//   function tokenCheck() {
+//     const jwt = localStorage.getItem('jwt');
+//   if (jwt) {
+//   auth.getContent(jwt)
+//   .then((res) => {
+//   if (res) {
+//   setLoggedIn(true);
+//   setUserEmail(res.data.email);
+//   history.push('/');
+//      }
+//    });
+//   }
+//  }
 
+ function tokenCheck () {
+  const jwt = localStorage.getItem('token');
   if (jwt) {
-  auth.getContent(jwt)
-  .then((res) => {
-  if (res) {
-  setLoggedIn(true);
-  setUserEmail(res.data.email);
-  history.push('/');
-     }
-   });
+    auth.getToken(jwt)
+    .then((res)=> {
+      setUserEmail(res.data.email)
+      setLoggedIn(true)
+    })
+    .catch(err => console.error(err));//выведем ошибку;
   }
- }
+}
 
  function handleAuthRegister(email, password) {
  auth.register(email, password)
@@ -221,7 +232,7 @@ function App() {
 
   useEffect(() => {
     tokenCheck();
-  }, []);
+  }, [tokenCheck]);
 
   // Объект с состояниями попапов
   const popupStateContext = {

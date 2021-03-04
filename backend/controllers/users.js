@@ -4,7 +4,9 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
-const AuthError = require('../errors/auth-err');
+// const AuthError = require('../errors/auth-err');
+
+const { JWT_SECRET } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -28,23 +30,24 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt.hash(password, 10)
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new ConflictError('Email уже используется');
+      }
+      return bcrypt.hash(password, 10);
+    })
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     }))
-    .then((user) => res.status(201).send({ data: user.omitPrivate() }))
-    .catch((err) => {
-      let error;
-      if (err.name === 'ValidationError') {
-        error = new BadRequestError('Некорректные данные в запросе');
-        return next(error);
-      }
-      if (err.name === 'MongoError' && err.code === 11000) {
-        error = new ConflictError('Пользователь с данным e-mail уже зарегистрирован');
-        return next(error);
-      }
-      return next(err);
-    });
+    .then(() => res.send({
+      name, about, avatar, email,
+    })) // {name, about, avatar, email}
+    .catch(next);
 };
 
 module.exports.updateUserProfile = (req, res, next) => {
@@ -97,17 +100,12 @@ module.exports.updateUserAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, (process.env.JWT_SECRET || 'dev-secret'), { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true }).end('Авторизация прошла успешно');
+      const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+      return res.send({ token });
     })
-    .catch((err) => {
-      let error;
-      if (err.name === 'Error') {
-        error = new AuthError('Неверный адрес электронной почты или пароль');
-        return next(error);
-      }
-      return next(err);
-    });
+
+    .catch(next);
 };
