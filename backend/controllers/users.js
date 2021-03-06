@@ -4,8 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
-// const AuthError = require('../errors/auth-err');
-
+const AuthError = require('../errors/auth-err');
 const { JWT_SECRET = 'secret' } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
@@ -17,20 +16,39 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+function getTokenFromReq(req){
+  var header = req.headers["authorization"];
+  return token = header.split(" ")[1];
+}
+function getIdFromToken(token){  
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded._id;
+}
+function getIdFromReqHeader(req){
+  const token = getTokenFromReq(req);
+  const id = getIdFromToken(token);
+  return id;
+}
+
+
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      console.log('currentUser from controllers/users.js', user);
-      if (user) {
-        return res.send({ data: user });
-      }
-      throw new NotFoundError('Пользователь не найден');
-    })
-    .catch(next);
+  try {        
+    const id = getIdFromReqHeader(req);
+    User.findById(id)
+      .then((user) => {      
+        if (user) {
+          return res.send(user);
+        }
+        throw new NotFoundError('Пользователь не найден');
+      })
+      .catch(next);
+  } catch (error) {
+    console.log("some fuck was");
+  }
+  
 };
 
-module.exports.getUserId = (req, res, next) => {
-  /* декодировать jwt, взять id, найти по id пользователя, отдать */
+module.exports.getUserId = (req, res, next) => {  
   User.findById(req.params.id)
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
@@ -42,18 +60,15 @@ module.exports.getUserId = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
-  } = req.body;
-  console.log(`${email} ${password}`);
+  } = req.body;  
   User.findOne({ email })
-    .then((user) => {
-      console.log(user);
+    .then((user) => {      
       if (user) {
         throw new ConflictError('Email уже используется');
       }
       return bcrypt.hash(password, 10);
     })
-    .then((hash) => {
-      console.log('hash =', hash);
+    .then((hash) => {      
       User.create({
         name,
         about,
@@ -70,8 +85,9 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUserProfile = (req, res, next) => {
   const { name, about } = req.body;
+  const id = getIdFromReqHeader(req);
   User.findByIdAndUpdate(
-    req.user._id,
+    id,
     { name, about },
     {
       new: true,
@@ -80,7 +96,7 @@ module.exports.updateUserProfile = (req, res, next) => {
   )
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       let error;
@@ -94,8 +110,9 @@ module.exports.updateUserProfile = (req, res, next) => {
 
 module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
+  const id = getIdFromReqHeader(req);
   User.findByIdAndUpdate(
-    req.user._id,
+    id,
     { avatar },
     {
       new: true,
@@ -104,7 +121,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
   )
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       let error;
