@@ -41,11 +41,6 @@ function App() {
     status: ''
   });
 
-  useEffect(() => {
-    tokenCheck();
-  }, []);
-
-
   const [cards, setCards] = React.useState([]);
 
   // Используем хук для получения информации о юзере и карточки
@@ -55,7 +50,7 @@ function App() {
         api.getUserInfoFromServer(), //получаем данные о пользователе
         api.getInitialCards() // Получаем массив карточек
       ])
-        .then((data) => {
+        .then((data) => {          
           const [userData, cardsData] = data;
           
           setCurrentUser(userData); //меняем состояния 
@@ -69,9 +64,10 @@ function App() {
   // Обработчик клика по лайку
   function handleCardLike(card) {
     // Проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(like => like._id === currentUser._id);
+    const isLiked = card.likes.includes(currentUser._id);    
 
-    // Отправляем запрос в API и получаем обновлённые данные карточки
+    // Отправляем запрос в API и получаем обновлённые данные карточки    
+
     api.changeLikeCardStatus(card, isLiked)
       .then((newCard) => {
         // Формируем новый массив на основе имеющегося, подставляя в него новую карточку
@@ -122,6 +118,7 @@ function App() {
   function handleAddPlace(newCard) {
     api.saveCardToServer(newCard)   // Сохраняем на сервере
       .then((newCard) => {
+
         setCards([newCard, ...cards])
         closeAllPopups()
       }) // Обновляем массив с карточками, добавляем загруженную
@@ -162,37 +159,6 @@ function App() {
     setIsInfoTooltip(false);
   }
 
-  function handleLogin(email) {
-    setLoggedIn(true);
-    setUserEmail(email);
-  }
-
-  //   function tokenCheck() {
-  //     const jwt = localStorage.getItem('token');
-  //   if (jwt) {
-  //   auth.getTa(jwt)
-  //   .then((res) => {
-  //   if (res) {
-  //   setLoggedIn(true);
-  //   setUserEmail(res.data.email);
-  //   history.push('/');
-  //      }
-  //    });
-  //   }
-  //  }
-
-  function tokenCheck() {
-    const jwt = localStorage.getItem('token');
-    if (jwt) {
-      auth.getToken(jwt)
-        .then((res) => {
-          setUserEmail(res.data.email)
-          setLoggedIn(true)
-        })
-        .catch(err => console.error(err));//выведем ошибку;
-    }
-  }
-
   function handleAuthRegister(email, password) {
     auth.register(email, password)
       .then((res) => {
@@ -210,16 +176,21 @@ function App() {
         console.log(err)
       });
   }
-
+  function handleLogin(email) {
+    setLoggedIn(true);
+    setUserEmail(email);
+  }
   function handleAuthLogin(email, password) {
     return auth.authorize(email, password)
-      .then((data) => {
-        if (data) {
-          handleLogin(email);
-          history.push('/');
-        }
-      })
-      .catch(err => console.log(err));
+    .then((data) => {
+      if (data) {      
+        window.content.localStorage.setItem("token", data.token);        
+        handleLogin(email);
+        history.push('/');
+        return data;
+      }
+    })
+    .catch(err => console.log(err));
   }
 
   function signOut() {
@@ -271,10 +242,8 @@ function App() {
               />
             </Route>
             <Route path="/sign-in">
-              <Login
-                handleLogin={handleLogin}
+              <Login                
                 authLogin={handleAuthLogin}
-                tokenCheck = {tokenCheck}
               />
             </Route>
             <Route>

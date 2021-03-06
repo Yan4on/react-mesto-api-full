@@ -1,10 +1,9 @@
 class Api {
   constructor({ baseUrl, headers }) {
     this._baseUrl = baseUrl;
-    this._headers = headers;
-    //   this._credentials = credentials;
+    this.headers = headers;
     //this._errorServer = document.querySelector(".error-server");
-    console.log("API errserver", this._errorServer);
+    this._errorServer = {};    
   }
 
   // Получение ответа от сервера, иначе ошибка
@@ -17,18 +16,17 @@ class Api {
   getInitialCards() {
     return fetch(`${this._baseUrl}/cards`, {
       headers: {
-        authorization: this.headers
-      }
-      //   credentials: this._credentials,
+        Authorization: this.headers
+      }      
     })
-      .then(res => { return this._getResponseData(res); })
+    .then(res => { return this._getResponseData(res); })
   }
 
   // Сохранение на сервере карточки
   saveCardToServer({ name, link }) {
     return fetch(`${this._baseUrl}/cards`, {
       headers: {
-        authorization: this.headers,
+        Authorization: this.headers,
         'Content-Type': 'application/json'
       },
       //   credentials: this._credentials,
@@ -45,7 +43,7 @@ class Api {
   deleteCardToServer(card) {
     return fetch(`${this._baseUrl}/cards/${card._id}`, {
       headers: {
-        authorization: this.headers,
+        Authorization: this.headers,
       },
       //   credentials: this._credentials,
       method: 'DELETE'
@@ -54,14 +52,19 @@ class Api {
 
   // Обновление лайка
   changeLikeCardStatus(card, isLiked) {
-    const action = isLiked ? 'DELETE' : 'PUT';
-
-    return fetch(`${this._baseUrl}/cards/${card._id}/likes`, {
-      headers: this._headers,
-      //   credentials: this._credentials,
-      method: action
-    })
-      .then((res) => { return this._getResponseData(res); })
+    const action = isLiked ? 'DELETE' : 'PUT';    
+      return fetch(
+        `${this._baseUrl}/cards/${card._id}/likes`, 
+        {
+          headers: {
+            Authorization: this.headers
+          },
+          method: action,
+        }
+      )
+      .then(
+        (res) => { return this._getResponseData(res); }
+      );
   }
 
   // Сохранение на сервере Аватара 
@@ -69,7 +72,7 @@ class Api {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       headers: {
         'Content-Type': 'application/json',
-        authorization: this.headers,
+        Authorization: this.headers,
       },
       //   credentials: this._credentials,
       method: 'PATCH',
@@ -84,7 +87,7 @@ class Api {
   getUserInfoFromServer() {
     return fetch(`${this._baseUrl}/users/me`, {
       headers: {
-        authorization: this.headers
+        Authorization: this.headers
       }
       //   credentials: this._credentials,
     })
@@ -93,29 +96,34 @@ class Api {
 
   // Сохранение на сервере информация о пользователе 
   saveUserInfoToServer({ name, about }) {
-    return fetch(`${this._baseUrl}/users/me`, {
-      headers: {
-        authorization: this.headers,
-        'Content-Type': 'application/json'
-      },
-      //   credentials: this._credentials,
-      method: 'PATCH',
-      body: JSON.stringify({
-        name: name,
-        about: about
+    var token = localStorage.getItem("token");
+    if (token){
+      return fetch(`${this._baseUrl}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        //   credentials: this._credentials,
+        method: 'PATCH',
+        body: JSON.stringify({
+          name: name,
+          about: about
+        })
       })
-    })
-      .then(res => { return this._getResponseData(res); })
+        .then(res => { return this._getResponseData(res); })
+    }
+    
   }
 
   // Вывод ошибки запроса к серверу на страницу
   setErrorServer(err) {
+    console.log("sesrver err");
     //this._errorServer.textContent = `Ошибка при соединение с сервером: ${err}. Попробуйте повторить позже`;
 
-    this._errorServer.classList.add('error-server_active');
-    setTimeout(() => {
-      this._errorServer.classList.remove('error-server_active');
-    }, 8000)
+    //this._errorServer.classList.add('error-server_active');
+    //setTimeout(() => {
+      //this._errorServer.classList.remove('error-server_active');
+    //}, 8000)
   }
 }
 
