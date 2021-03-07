@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const { isCelebrate } = require('celebrate');
+// const { isCelebrate } = require('celebrate');
 
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -93,7 +93,7 @@ app.all('/*', () => {
 
 // обработчик ошибок
 app.use((err, req, res, next) => {
-  const { statusCode = isCelebrate(err) ? 400 : 500, message } = err;
+  const { statusCode = (err) ? 400 : 500, message } = err;
   res
     .status(statusCode)
     .send({
