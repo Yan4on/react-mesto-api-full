@@ -1,5 +1,5 @@
 import logoOk from '../images/ok.svg';
-import logoErr from '../images/error.svg';
+import logoError from '../images/error.svg';
 import React, { memo } from 'react';
 
 const InfoTooltip = memo(({ isOpen, onClose }) => {
@@ -9,7 +9,7 @@ const InfoTooltip = memo(({ isOpen, onClose }) => {
         <div className="popup__logo"
           style={isOpen.status === 'ok'
             ? { backgroundImage: `url(${logoOk})` }
-            : { backgroundImage: `url(${logoErr})` }
+            : { backgroundImage: `url(${logoError})` }
           }
         ></div>
         <h2 className="popup__message">{isOpen.message}</h2>

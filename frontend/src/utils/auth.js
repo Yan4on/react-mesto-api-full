@@ -10,7 +10,6 @@ export const register = (email, password) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password }),
-        // credentials: 'include',
     })
         .then(checkRes);
 };
@@ -21,9 +20,8 @@ export const authorize = (email, password) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password }),
-        // credentials: 'include',
     })
-        .then(checkRes)//.then((res) => { localStorage.setItem('token', res["token"]); return res; }).then(checkRes);
+        .then(checkRes)
 };
 
 //получаем токен
@@ -44,10 +42,6 @@ export const logout = () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        // credentials: 'include',
     })
-        .then(res => {
-            if (res.ok) { return res.json(); }
-            return Promise.reject(new Error(`Ошибка: ${res.status}`));
-        });
+    .then(checkRes);
 } 

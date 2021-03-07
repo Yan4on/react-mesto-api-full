@@ -2,8 +2,8 @@ class Api {
   constructor({ baseUrl, headers }) {
     this._baseUrl = baseUrl;
     this.headers = headers;
-    //this._errorServer = document.querySelector(".error-server");
-    this._errorServer = {};    
+    // this._errorServer = document.querySelector(".error-server");
+    //this._errorServer = {};    
   }
 
   // Получение ответа от сервера, иначе ошибка
@@ -29,7 +29,6 @@ class Api {
         Authorization: this.headers,
         'Content-Type': 'application/json'
       },
-      //   credentials: this._credentials,
       method: 'POST',
       body: JSON.stringify({
         name: name,
@@ -45,7 +44,6 @@ class Api {
       headers: {
         Authorization: this.headers,
       },
-      //   credentials: this._credentials,
       method: 'DELETE'
     })
   }
@@ -74,7 +72,6 @@ class Api {
         'Content-Type': 'application/json',
         Authorization: this.headers,
       },
-      //   credentials: this._credentials,
       method: 'PATCH',
       body: JSON.stringify({
         avatar: link
@@ -89,21 +86,19 @@ class Api {
       headers: {
         Authorization: this.headers
       }
-      //   credentials: this._credentials,
     })
       .then(res => { return this._getResponseData(res); })
   }
 
   // Сохранение на сервере информация о пользователе 
   saveUserInfoToServer({ name, about }) {
-    var token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (token){
       return fetch(`${this._baseUrl}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        //   credentials: this._credentials,
         method: 'PATCH',
         body: JSON.stringify({
           name: name,
@@ -118,12 +113,12 @@ class Api {
   // Вывод ошибки запроса к серверу на страницу
   setErrorServer(err) {
     console.log("sesrver err");
-    //this._errorServer.textContent = `Ошибка при соединение с сервером: ${err}. Попробуйте повторить позже`;
+    this._errorServer.textContent = `Ошибка при соединение с сервером: ${err}. Попробуйте повторить позже`;
 
-    //this._errorServer.classList.add('error-server_active');
-    //setTimeout(() => {
-      //this._errorServer.classList.remove('error-server_active');
-    //}, 8000)
+    this._errorServer.classList.add('error-server_active');
+    setTimeout(() => {
+      this._errorServer.classList.remove('error-server_active');
+    }, 8000)
   }
 }
 
@@ -131,5 +126,4 @@ export const api = new Api({
   baseUrl: 'http://localhost:3000',
   headers: `Bearer ${localStorage.getItem('token')}`
   //   baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
-  //   credentials: 'include'
 });

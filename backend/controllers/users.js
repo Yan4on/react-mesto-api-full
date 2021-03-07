@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-return-assign */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -5,6 +7,7 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
 const AuthError = require('../errors/auth-err');
+
 const { JWT_SECRET = 'secret' } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
@@ -16,26 +19,26 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-function getTokenFromReq(req){
-  var header = req.headers["authorization"];
-  return token = header.split(" ")[1];
+function getTokenFromReq(req) {
+  const header = req.headers.authorization;
+  // eslint-disable-next-line no-undef
+  return token = header.split(' ')[1];
 }
-function getIdFromToken(token){  
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded._id;
+function getIdFromToken(token) {
+  const decoded = jwt.verify(token, JWT_SECRET);
+  return decoded._id;
 }
-function getIdFromReqHeader(req){
+function getIdFromReqHeader(req) {
   const token = getTokenFromReq(req);
   const id = getIdFromToken(token);
   return id;
 }
 
-
 module.exports.getCurrentUser = (req, res, next) => {
-  try {        
+  try {
     const id = getIdFromReqHeader(req);
     User.findById(id)
-      .then((user) => {      
+      .then((user) => {
         if (user) {
           return res.send(user);
         }
@@ -43,12 +46,11 @@ module.exports.getCurrentUser = (req, res, next) => {
       })
       .catch(next);
   } catch (error) {
-    console.log("some fuck was");
+    console.log('err getCurrentUser');
   }
-  
 };
 
-module.exports.getUserId = (req, res, next) => {  
+module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.id)
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => {
@@ -60,15 +62,15 @@ module.exports.getUserId = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
-  } = req.body;  
+  } = req.body;
   User.findOne({ email })
-    .then((user) => {      
+    .then((user) => {
       if (user) {
         throw new ConflictError('Email уже используется');
       }
       return bcrypt.hash(password, 10);
     })
-    .then((hash) => {      
+    .then((hash) => {
       User.create({
         name,
         about,
@@ -138,6 +140,9 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new AuthError('Некорректные почта или пароль');
+      }
       const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '1h' });
       return res.send({ token });
     })

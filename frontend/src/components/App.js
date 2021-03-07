@@ -3,7 +3,7 @@ import { Route, Switch, useHistory, useLocation, Redirect } from 'react-router-d
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm.js';
+import DelCardPopup from './DelCardPopup';
 import PopupWithImage from './PopupWithImage.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -42,6 +42,7 @@ function App() {
   });
 
   const [cards, setCards] = React.useState([]);
+  const [cardToDel, setCardToDel] = useState({}); // состояние карточки, которую удаляют
 
   // Используем хук для получения информации о юзере и карточки
   useEffect(() => {
@@ -56,7 +57,7 @@ function App() {
           setCurrentUser(userData); //меняем состояния 
           setCards(cardsData);
         })
-        .catch((err) => { console.log("оштбка err") })
+        .catch((err) => { console.log("ошибка err") })
     }
   }, [loggedIn]);
 
@@ -64,7 +65,7 @@ function App() {
   // Обработчик клика по лайку
   function handleCardLike(card) {
     // Проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.includes(currentUser._id);    
+    const isLiked = card.likes.some(like => like._id === currentUser._id);    
 
     // Отправляем запрос в API и получаем обновлённые данные карточки    
 
@@ -78,13 +79,13 @@ function App() {
   }
 
   // Обработчик кнопки удаления карточки
-  function handleCardDelete(card) {
+  function handleCardDelete(cardToDel) {
     // Отправляем запрос в API и получаем обновлённые данные карточки
-    api.deleteCardToServer(card)
+    api.deleteCardToServer(cardToDel)
       .then(() => {
         // Формируем новый массив на основе имеющегося, если ИД совпадает с ИД 
         // удаляемой карточки, то она не должна попасть в новый массив
-        const newCards = cards.filter((c) => c._id !== card._id && c);
+        const newCards = cards.filter((c) => c._id !== cardToDel._id && c);
         setCards(newCards);  // Обновляем стейт
       })
       .catch((err) => { api.setErrorServer(err); });
@@ -155,14 +156,15 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
-    setSelectedCard({});
+    setIsDelCardPopupOpen(false);
     setIsInfoTooltip(false);
+    setSelectedCard({});
   }
 
   function handleAuthRegister(email, password) {
     auth.register(email, password)
       .then((res) => {
-        if (res.status === 201) {
+        if (res.email) {
           onInfoTooltip('Вы успешно зарегистрировались!', 'ok')
           history.push('/sign-in');
           changeCurrUrl('/sign-in');
@@ -184,19 +186,45 @@ function App() {
     return auth.authorize(email, password)
     .then((data) => {
       if (data) {      
-        window.content.localStorage.setItem("token", data.token);        
+        localStorage.setItem("token", data.token);        
         handleLogin(email);
         history.push('/');
-        return data;
+        window.location.reload();//обновляю страницу, чтобы новый юзер отобразился
       }
     })
     .catch(err => console.log(err));
   }
 
+  function tokenCheck() {
+    const jwt = localStorage.getItem("token");
+    
+    if (jwt) {
+      auth.getToken(jwt)
+        .then((res) => {
+          if (res) {
+            const userEmail = {
+              email: res.email
+            }
+            handleLogin();
+            history.push('/');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      } else {
+        return;
+      }
+  }
+
+  React.useEffect(() => {
+    tokenCheck(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function signOut() {
-    localStorage.removeItem('jwt');
     setLoggedIn(false);
-    history.push('/sign-in');
+    localStorage.removeItem('token');
+    setUserEmail('')
   }
 
   function changeCurrUrl(url) {
@@ -207,11 +235,17 @@ function App() {
     setCurrURL(location.pathname);
   }, [location.pathname, currURL]);
 
+
   // Объект с состояниями попапов
   const popupStateContext = {
     isEditProfilePopupOpen,
     isEditAvatarPopupOpen,
     isAddPlacePopupOpen
+  }
+
+  function handleDelCardPopup(card) {
+    setIsDelCardPopupOpen(true);
+    setCardToDel(card);
   }
 
   return (
@@ -232,7 +266,7 @@ function App() {
               onCardClick={handleCardClick} // Обработчик клика по карточке
               cards={cards}
               onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}
+              onCardDelete={handleDelCardPopup}
             />
             } />
             <Route path="/sign-up">
@@ -275,14 +309,13 @@ function App() {
           />
 
           {/*Создаем попап для подтверждения удаления карточки и передаем пропсы и обработчики*/}
-          <PopupWithForm
-            name="confirm-delete"
-            title="Вы уверены?"
-            btnName="Да"
+          <DelCardPopup
             isOpen={isDelCardPopupOpen}
             onClose={closeAllPopups}
+            onDelCard={handleCardDelete}
+            card={cardToDel}
           >
-          </PopupWithForm>
+          </DelCardPopup>
 
           {/*Создаем попап с картинкой и передаем пропсы и обработчики*/}
           <PopupWithImage
