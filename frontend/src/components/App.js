@@ -87,6 +87,7 @@ function App() {
         // удаляемой карточки, то она не должна попасть в новый массив
         const newCards = cards.filter((c) => c._id !== cardToDel._id && c);
         setCards(newCards);  // Обновляем стейт
+        closeAllPopups();
       })
       .catch((err) => { api.setErrorServer(err); });
   }
@@ -187,7 +188,7 @@ function App() {
     .then((data) => {
       if (data) {      
         localStorage.setItem("token", data.token);        
-        history.push('/');
+        // history.push('/');
         window.location.reload();//обновляю страницу, чтобы новый юзер отобразился
         handleLogin(email);
       }
