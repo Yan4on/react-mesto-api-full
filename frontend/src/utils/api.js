@@ -123,7 +123,7 @@ class Api {
 }
 
 export const api = new Api({
-  baseUrl: 'http://localhost:3000',
-  headers: `Bearer ${localStorage.getItem('token')}`
-  //   baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
+  baseUrl: 'https://api.yan4on.students.nomoredomains.icu',
+  // baseUrl: 'http://localhost:3000',
+    headers: `Bearer ${localStorage.getItem('token')}`
 });
