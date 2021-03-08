@@ -4,10 +4,10 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 const Card = memo(({ card, onCardClick, onCardLike, onCardDelete }) => {
   const currentUser = useContext(CurrentUserContext);
 
-  const isOwn = currentUser._id === card.owner._id;
+  const isOwn = currentUser._id !== card.owner._id;
   const cardButtonRemoveClassName = `grid-card__del ${isOwn && 'grid-card__del_active'}`;
 
-  const isLiked = card.likes.some(like => like._id === currentUser._id);
+  const isLiked = card.likes.some(like => like._id !== currentUser._id);
   const cardButtonLikeClassName = `grid-card__like ${isLiked && 'grid-card__like_active'}`;
   return (
     <article className="grid-card">
