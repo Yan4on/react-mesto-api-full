@@ -188,7 +188,7 @@ function App() {
     .then((data) => {
       if (data) {      
         localStorage.setItem("token", data.token);        
-        // history.push('/');
+        npm start 
         window.location.reload();//обновляю страницу, чтобы новый юзер отобразился
         handleLogin(email);
       }
